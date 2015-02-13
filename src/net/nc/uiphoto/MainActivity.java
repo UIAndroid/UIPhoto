@@ -19,9 +19,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		btnViewPager = (Button) findViewById(R.id.btn_viewpager);
 		btnViewPager.setOnClickListener(this);
 		
-		
-		
-		
 	}
 
 	@Override
