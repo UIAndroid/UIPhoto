@@ -1,22 +1,28 @@
 package net.nc.uiphoto;
 
-import uk.co.senab.photoview.PhotoView;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.nc.uiphoto.adapter.SamplePagerAdapter;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 
-public class ViewPagerActivity extends Activity {
+public class ViewPagerActivity extends Activity implements OnClickListener {
 	
 	private ViewPager vpImages;
 
 	private SamplePagerAdapter mSamplePagerAdapter;
 
 	private static int currentIndex;
+	
+	private List<Integer> drawableIds;
+	
+	private TextView tv1, tv2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +30,18 @@ public class ViewPagerActivity extends Activity {
 		setContentView(R.layout.activity_view_pager);
 		
 		vpImages = (ViewPager) findViewById(R.id.vp_images);
+		
+		tv1 = (TextView) findViewById(R.id.textView1);
+		tv2 = (TextView) findViewById(R.id.textView2);
+		
+		tv1.setOnClickListener(this);
+		tv2.setOnClickListener(this);
+		
+		drawableIds = new ArrayList<Integer>();
+		
+		setDrawableIds(R.drawable.wallpaper);
 
-		mSamplePagerAdapter = new SamplePagerAdapter();
+		mSamplePagerAdapter = new SamplePagerAdapter(drawableIds);
 		vpImages.setAdapter(mSamplePagerAdapter);
 		
 		vpImages.setOnPageChangeListener(new OnPageChangeListener() {
@@ -48,56 +64,34 @@ public class ViewPagerActivity extends Activity {
 		});
 	}
 	
-	static class SamplePagerAdapter extends PagerAdapter {
-
-		private static final int[] sDrawables = { R.drawable.wallpaper,
-				R.drawable.wallpaper, R.drawable.wallpaper,
-				R.drawable.wallpaper, R.drawable.wallpaper,
-				R.drawable.wallpaper };
-
-		@Override
-		public int getCount() {
-			return sDrawables.length;
+	private void setDrawableIds(int id){
+		drawableIds.clear();
+		for(int i=0; i<6; i++){
+			drawableIds.add(id);
 		}
-
-		@Override
-		public View instantiateItem(ViewGroup container, int position) {
-			PhotoView photoView = new PhotoView(container.getContext());
-			photoView.setImageResource(sDrawables[position]);
-			photoView.setTag(position);
-
-			// Now just add PhotoView to ViewPager and return it
-			container.addView(photoView, LayoutParams.MATCH_PARENT,
-					LayoutParams.MATCH_PARENT);
-
-			return photoView;
-		}
-
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			container.removeView((View) object);
-		}
-
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return view == object;
-		}
-
-		@Override
-		public int getItemPosition(Object object) {
-			PhotoView photoView = (PhotoView) object;
-			int currentPage = getCurrentIndex(); 
-			if (currentPage == (Integer) photoView.getTag()) {
-				return POSITION_NONE;
-			} else {
-				return POSITION_UNCHANGED;
-			}
-		}
-
 	}
-
+	
 	public static int getCurrentIndex() {
 		return currentIndex;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.textView1:
+			setDrawableIds(R.drawable.wallpaper);
+			mSamplePagerAdapter = new SamplePagerAdapter(drawableIds);
+			vpImages.setAdapter(mSamplePagerAdapter);
+			break;
+		case R.id.textView2:
+			setDrawableIds(R.drawable.ic_launcher);
+			mSamplePagerAdapter = new SamplePagerAdapter(drawableIds);
+			vpImages.setAdapter(mSamplePagerAdapter);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }
